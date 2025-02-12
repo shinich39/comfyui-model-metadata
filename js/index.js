@@ -75,7 +75,12 @@ function findData(models, filename) {
     return {};
   }
 
-  filename = filename.split(".").slice(0, filename.split(".").length - 1).join(".");
+  filename = filename
+    .split(".")
+    .slice(0, filename.split(".").length - 1)
+    .join(".")
+    .split("/")
+    .pop();
 
   for (const m of models) {
     for (const v of m.versions) {
