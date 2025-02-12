@@ -79,7 +79,7 @@ function findData(models, filename) {
     .split(".")
     .slice(0, filename.split(".").length - 1)
     .join(".")
-    .split("/")
+    .split(/[\\\/]/g)
     .pop();
 
   for (const m of models) {
@@ -133,9 +133,6 @@ app.registerExtension({
 	name: `shinich39.${NODE_TYPE}`,
   setup() {
     load().then(({ data, models }) => {
-      // console.log(data);
-      // console.log(models);
-
       checkpoints = data?.checkpoints || [];      
       if (data?.checkpoints && models?.checkpoints) {
         checkpoints = checkpoints.filter((c) => {
@@ -179,6 +176,11 @@ app.registerExtension({
           return isExists;
         });
       }
+      
+      // console.log(data);
+      // console.log(models);
+      // console.log(checkpoints);
+      // console.log(loras);
     });
   },
   async beforeRegisterNodeDef(nodeType, nodeData, app) {
