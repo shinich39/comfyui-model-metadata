@@ -1,6 +1,6 @@
 {
   "name": "comfyui-model-metadata",
-  "version": "1.0.0",
+  "version": "1.0.1",
   "description": "Print model metadata on note node",
   "type": "module",
   "main": "index.js",

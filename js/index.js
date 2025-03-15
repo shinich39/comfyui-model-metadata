@@ -184,8 +184,8 @@ app.registerExtension({
     });
   },
   async beforeRegisterNodeDef(nodeType, nodeData, app) {
-		const isCkpt = CKPT_TYPES.indexOf(nodeType.comfyClass) > -1;
-		const isLora = LORA_TYPES.indexOf(nodeType.comfyClass) > -1;
+		const isCkpt = CKPT_TYPES.indexOf(nodeType.comfyClass || nodeData.name) > -1;
+		const isLora = LORA_TYPES.indexOf(nodeType.comfyClass || nodeData.name) > -1;
     if (isCkpt) {
       const origGetExtraMenuOptions = nodeType.prototype.getExtraMenuOptions;
       nodeType.prototype.getExtraMenuOptions = function (_, options) {
@@ -200,30 +200,32 @@ app.registerExtension({
           const ckptName = ckptWidget.value;
           const { model, version } = findData(checkpoints, ckptName);
 
-          let optionIndex = options.findIndex((o) => o?.content === "Properties");
-          if (optionIndex > -1) {
-            let newOptions = [
-              {
-                content: "Print metadata on Note",
-                disabled: !(model && version),
-                callback: () => {
-                  createNote(createContent(model, version), this.pos[0] + this.size[0] + 16, this.pos[1]);
-                }
-              }, {
-                content: "Open civitai in a new tab",
-                disabled: !(model && version),
-                callback: () => {
-                  openURL(`https://civitai.com/models/${model.id}?modelVersionId=${version.id}`);
-                }
-              },
-            ];
-            
-            options.splice(
-              optionIndex,
-              0,
-              ...newOptions
-            );
+          let optionIndex = options.findIndex((o) => o?.content === "Inputs");
+          if (optionIndex < 0) {
+            optionIndex = 0;
           }
+          
+          let newOptions = [
+            {
+              content: "Print metadata on Note",
+              disabled: !(model && version),
+              callback: () => {
+                createNote(createContent(model, version), this.pos[0] + this.size[0] + 16, this.pos[1]);
+              }
+            }, {
+              content: "Open civitai in a new tab",
+              disabled: !(model && version),
+              callback: () => {
+                openURL(`https://civitai.com/models/${model.id}?modelVersionId=${version.id}`);
+              }
+            },
+          ];
+          
+          options.splice(
+            optionIndex,
+            0,
+            ...newOptions
+          );
         } catch(err) {
           console.error(err);
         }
